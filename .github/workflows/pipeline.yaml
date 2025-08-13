@@ -35,7 +35,7 @@ jobs:
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: ./application/client
           push: true
           tags: ${{ env.FRONTEND_IMAGE }}:1.0
           platforms: linux/amd64,linux/arm64
@@ -43,7 +43,7 @@ jobs:
       - name: Build and push backend image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
+          context: ./application/server
           push: true
           tags: ${{ env.BACKEND_IMAGE }}:1.0
           platforms: linux/amd64,linux/arm64
