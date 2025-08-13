@@ -6,9 +6,17 @@ metadata:
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: elb
 spec:
-  type: LoadBalancer
-  selector:
+  # type: LoadBalancer
+  # selector:
+  #   app: backend
+  # ports:
+  # - port: 3001
+  #   targetPort: 3001
+  type: NodePort
+  selector:   
     app: backend
-  ports:
+  ports:  
   - port: 3001
     targetPort: 3001
+    nodePort: 30400
+    protocol: TCP
