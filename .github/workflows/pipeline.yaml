@@ -69,8 +69,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_IP }} << 'EOF'
             # Set up kubectl configuration on EC2 (if not already set)
             mkdir -p ~/directory_test
-            kubectl rollout restart deployment server -n crud
-            kubectl rollout restart deployment client -n crud
+            kubectl rollout restart deployment backend-deployment -n crud
+            kubectl rollout restart deployment frontend-deployment -n crud
           EOF
       
       
