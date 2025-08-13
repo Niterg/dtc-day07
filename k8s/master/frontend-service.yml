@@ -3,17 +3,12 @@ kind: Service
 metadata:
   name: client
   namespace: crud
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: elb
 spec:
-  # type: LoadBalancer
-  # selector:
-  #   app: frontend
-  # ports:
-  # - port: 3000
-  #   targetPort: 80
-  type: NodePort
+  type: LoadBalancer
   selector:
-    app: frontend 
+    app: frontend
   ports:
-  - port: 80
+  - port: 3000
     targetPort: 80
-    nodePort: 30300

@@ -36,18 +36,42 @@ jobs:
         id: vars
         run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Build and push frontend image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./application/client
-          push: true
-          tags: ${{ env.FRONTEND_IMAGE }}:${{ env.SHA }}
-          platforms: linux/amd64,linux/arm64
+      # - name: Build and push frontend image
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./application/client
+      #     push: true
+      #     tags: ${{ env.FRONTEND_IMAGE }}:${{ env.SHA }}
+      #     platforms: linux/amd64,linux/arm64
     
-      - name: Build and push backend image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./application/server
-          push: true
-          tags: ${{ env.BACKEND_IMAGE }}:${{ env.SHA }}
-          platforms: linux/amd64,linux/arm64
+      # - name: Build and push backend image
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./application/server
+      #     push: true
+      #     tags: ${{ env.BACKEND_IMAGE }}:${{ env.SHA }}
+      #     platforms: linux/amd64,linux/arm64
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssh-client
+
+      - name: Add SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts
+
+      - name: SSH into EC2 & Set up Kubernetes
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_IP }} << 'EOF'
+            # Set up kubectl configuration on EC2 (if not already set)
+            mkdir -p ~/directory_test
+            kubectl rollout restart deployment server -n crud
+            kubectl rollout restart deployment client -n crud
+          EOF
+      
+      
+          
