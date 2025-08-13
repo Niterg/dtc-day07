@@ -89,3 +89,32 @@ echo "Kubernetes components installation complete!"
 echo "Next steps:"
 echo "1. On master node: kubeadm init with appropriate parameters"
 echo "2. On worker nodes: kubeadm join with token from master"
+
+sudo kubeadm init \
+        --control-plane-endpoint=$(curl -s ifconfig.me) \
+        --apiserver-cert-extra-sans=$(curl -s ifconfig.me) \
+        --pod-network-cidr="192.168.0.0/16" \
+        --node-name=$(hostname -s) \
+        --ignore-preflight-errors Swap \
+        --ignore-preflight-errors NumCPU \
+        --ignore-preflight-errors Mem 
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl get --raw='/readyz?verbose'
+
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=amd64
+if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+
+cilium install --version 1.18.0 \
+  --set ipam.operator.clusterPoolIPv4PodCIDRList=192.168.0.0/16
+echo "Kubernetes master node setup complete!"
+
+kubectl taint nodes --all node-role.kubernetes.io/control-plane-

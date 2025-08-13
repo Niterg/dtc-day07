@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend-pod
-        image: prab205/3-tier-backend-amd
+        image: niraulaparag/dtc-backend:c914a9d
         imagePullPolicy: "Always"
         resources:
           requests:

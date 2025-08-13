@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend-pod
-        image: prab205/3-tier-frontend-amd
+        image: niraulaparag/dtc-frontend:c914a9d
         imagePullPolicy: "Always"
         resources:
           requests:

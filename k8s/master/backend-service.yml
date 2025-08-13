@@ -4,9 +4,16 @@ metadata:
   name: server
   namespace: crud
 spec:
-  type: LoadBalancer
-  selector:
+  # type: LoadBalancer
+  # selector:
+  #   app: backend
+  # ports:
+  # - port: 3001
+  #   targetPort: 3001
+  type: NodePort
+  selector: 
     app: backend
-  ports:
+  ports:      
   - port: 3001
     targetPort: 3001
+    nodePort: 30400

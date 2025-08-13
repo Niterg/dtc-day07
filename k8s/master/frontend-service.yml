@@ -4,9 +4,16 @@ metadata:
   name: client
   namespace: crud
 spec:
-  type: LoadBalancer
+  # type: LoadBalancer
+  # selector:
+  #   app: frontend
+  # ports:
+  # - port: 3000
+  #   targetPort: 80
+  type: NodePort
   selector:
-    app: frontend
+    app: frontend 
   ports:
-  - port: 3000
+  - port: 80
     targetPort: 80
+    nodePort: 30300
